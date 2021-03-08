@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+import cv2
+import urllib.request
+import os 
 
 URL = 'http://dai.cs.rutgers.edu/dai/s/occurrence?id_SignBankVariant=380'
 page = requests.get(URL)
@@ -43,3 +46,16 @@ for video in somelist:
     ulz = ulz[:-3]
     ulz = ulz[13:]
     print(ulz)
+    urllib.request.urlretrieve(ulz, 'videos\\' + str(video))
+    vidcap = cv2.VideoCapture('videos\\' + str(video))
+    success,image = vidcap.read()
+    count = 0
+    directory = "images\\" + str(video)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    while success:
+        cv2.imwrite("images\\"+ str(video) + "\\frame%d.jpg" % count, image)     # save frame as JPEG file      
+        success,image = vidcap.read()
+        print('Read a new frame: ', success)
+        count += 1
